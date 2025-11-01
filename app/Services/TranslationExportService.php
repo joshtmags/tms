@@ -1,5 +1,5 @@
 <?php
-// app/Services/TranslationExportService.php
+
 namespace App\Services;
 
 use App\Models\Language;
@@ -20,7 +20,7 @@ class TranslationExportService
 
         Log::info("cache key: [{$cache_key}]");
 
-        // Try to get from cache first for performance
+        // try to get from cache if key exists
         return Cache::remember($cache_key, 3600, function () use ($language_code, $tags, $format, $include_empty) {
             return $this->generateExportData($language_code, $tags, $format, $include_empty);
         });
@@ -28,31 +28,31 @@ class TranslationExportService
 
     private function generateExportData(string $language_code, array $tags, string $format, bool $include_empty): array
     {
-        $language = Language::where('code', $language_code)->first();
+        $language = Language::where("code", $language_code)->first();
         if (!$language) {
             return [];
         }
 
         $query = TranslationGroup::with([
-            'translations' => function ($query) use ($language) {
-                $query->where('language_id', $language->id);
+            "translations" => function ($query) use ($language) {
+                $query->where("language_id", $language->id);
             }
         ])
-            ->select('translation_groups.id', 'translation_groups.key', 'translation_groups.description');
+            ->select("translation_groups.id", "translation_groups.key", "translation_groups.description");
 
         // Filter by tags if provided
         if (!empty($tags)) {
-            $query->whereHas('tags', function ($q) use ($tags) {
-                $q->whereIn('name', $tags);
+            $query->whereHas("tags", function ($q) use ($tags) {
+                $q->whereIn("name", $tags);
             });
         }
 
         // Filter out empty translations if required
         if (!$include_empty) {
-            $query->whereHas('translations', function ($q) use ($language) {
-                $q->where('language_id', $language->id)
-                    ->whereNotNull('value')
-                    ->where('value', '!=', '');
+            $query->whereHas("translations", function ($q) use ($language) {
+                $q->where("language_id", $language->id)
+                    ->whereNotNull("value")
+                    ->where("value", "!=", "");
             });
         }
 
@@ -64,8 +64,8 @@ class TranslationExportService
     private function formatExportData($translation_groups, string $format): array
     {
         return match ($format) {
-            // 'nested' => $this->formatNested($translation_groups),
-            // 'grouped' => $this->formatGrouped($translation_groups),
+            // "nested" => $this->formatNested($translation_groups),
+            // "grouped" => $this->formatGrouped($translation_groups),
             default => $this->formatFlat($translation_groups),
         };
     }
@@ -76,7 +76,7 @@ class TranslationExportService
 
         foreach ($translation_groups as $group) {
             $translation = $group->translations->first();
-            $export_data[$group->key] = $translation ? $translation->value : '';
+            $export_data[$group->key] = $translation ? $translation->value : "";
         }
 
         return $export_data;
@@ -95,30 +95,35 @@ class TranslationExportService
     /**
      * High-performance method for large datasets using raw SQL
      */
-    public function exportTranslationsOptimized(string $language_code, array $tags = [], string $format = 'flat'): array
+    public function exportTranslationsOptimized(string $language_code, array $tags = [], string $format = "flat"): array
     {
-        $language = Language::where('code', $language_code)->first();
+        $language = Language::where("code", $language_code)->first();
         if (!$language) {
             return [];
         }
 
-        $query = DB::table('translation_groups')
+        $query = DB::table("translation_groups")
             ->select(
-                'translation_groups.key',
-                'translations.value'
+                "translation_groups.key",
+                "translations.value"
             )
-            ->leftJoin('translations', function ($join) use ($language) {
-                $join->on('translation_groups.id', '=', 'translations.translation_group_id')
-                    ->where('translations.language_id', '=', $language->id);
+            ->leftJoin("translations", function ($join) use ($language) {
+                $join->on("translation_groups.id", "=", "translations.translation_group_id")
+                    ->where("translations.language_id", "=", $language->id);
             })
-            ->whereNotNull('translations.value')
-            ->where('translations.value', '!=', '');
+            ->whereNotNull("translations.value")
+            ->where("translations.value", "!=", "");
 
         // Filter by tags if provided
         if (!empty($tags)) {
-            $query->join('translation_group_tag', 'translation_groups.id', '=', 'translation_group_tag.translation_group_id')
-                ->join('translation_tags', 'translation_group_tag.translation_tag_id', '=', 'translation_tags.id')
-                ->whereIn('translation_tags.name', $tags)
+            $query->join(
+                "translation_group_tag",
+                "translation_groups.id",
+                "=",
+                "translation_group_tag.translation_group_id"
+            )
+                ->join("translation_tags", "translation_group_tag.translation_tag_id", "=", "translation_tags.id")
+                ->whereIn("translation_tags.name", $tags)
                 ->distinct();
         }
 

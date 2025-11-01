@@ -1,5 +1,5 @@
 <?php
-// app/Http/Controllers/API/TranslationController.php
+
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
@@ -15,11 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 class TranslationController extends Controller
 {
-    public function __construct(private TranslationService $translation_service)
-    {
-        // Apply auth middleware to all methods
-        // $this->middleware("auth:sanctum");
-    }
+    public function __construct(private TranslationService $translation_service) {}
 
     public function index(ViewTranslationRequest $request): JsonResponse
     {
@@ -144,7 +140,7 @@ class TranslationController extends Controller
 
     public function store(StoreTranslationRequest $request): JsonResponse
     {
-        $start_time = microtime(true);  // benchmark write speed
+        $start_time = microtime(true);
 
         try {
             $translation_group = $this->translation_service->createTranslationGroup($request->validated());

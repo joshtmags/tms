@@ -32,7 +32,7 @@ class TranslationService
                 $this->syncTags($translation_group, $data["tags"]);
             }
 
-            // Load relationships for response
+            // Load relationships for resource response
             $translation_group->load(["translations.language", "tags"]);
 
             $languages = collect($data["translations"])->pluck("language_code");
@@ -117,7 +117,7 @@ class TranslationService
         $query = TranslationGroup::with(["translations.language", "tags"])
             ->select("translation_groups.*");
 
-        // Search by key or description
+        // search by key or description
         if (!empty($filters["search"])) {
             $search_term = "%" . $filters["search"] . "%";
             $query->where(function ($q) use ($search_term) {
@@ -129,21 +129,21 @@ class TranslationService
             });
         }
 
-        // Filter by tags
+        // tags filter
         if (!empty($filters["tags"])) {
             $query->whereHas("tags", function ($q) use ($filters) {
                 $q->whereIn("name", $filters["tags"]);
             });
         }
 
-        // Filter by language
+        // language filter
         if (!empty($filters["language"])) {
             $query->whereHas("translations.language", function ($q) use ($filters) {
                 $q->where("code", $filters["language"]);
             });
         }
 
-        // Apply sorting
+        // sort
         $query->orderBy($sort_by, $sort_order);
 
         if (!empty($filters["language"])) {
