@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\DocumentationController;
 use App\Http\Controllers\API\TranslationController;
 use App\Http\Controllers\API\TranslationExportController;
 use Illuminate\Support\Facades\Route;
 
+Route::get("/docs", [DocumentationController::class, "index"]);
 
 Route::prefix("auth")->group(function () {
     Route::post("/login", [AuthController::class, "login"])->middleware("throttle:api");
