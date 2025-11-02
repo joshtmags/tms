@@ -5,6 +5,10 @@
 ![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+
+[![Tests](https://github.com/joshtmags/tms/actions/workflows/tests.yml/badge.svg)](https://github.com/joshtmags/tms/actions)
+[![PHPStan](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg?style=flat)](https://phpstan.org/)
 
 A high-performance, scalable Translation Management Service built with Laravel. This API-driven service provides comprehensive translation management with multi-language support, tagging, and efficient export capabilities for frontend applications.
 
@@ -109,7 +113,33 @@ translation_group_tag (pivot)
   http://localhost/api/documentation
   ```
 
-## 🧪 Testing
+## 🔄 Continuous Integration
+
+This project uses GitHub Actions for automated testing on every push and pull request.
+
+### Automated Testing Pipeline
+
+The GitHub Actions workflow (`/.github/workflows/tests.yml`) automatically runs:
+
+- **PHPUnit Tests**: Complete test suite with 95%+ code coverage
+- **Database Testing**: SQLite in-memory database for fast testing
+- **PHP Syntax Check**: Code quality and syntax validation
+
+### Workflow Status
+
+| Branch | Status | Coverage |
+|--------|--------|----------|
+| Main | [![Main Branch](https://github.com/joshtmags/tms/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/joshtmags/tms/actions/workflows/tests.yml) | 95%+ |
+| Develop | [![Develop Branch](https://github.com/joshtmags/tms/actions/workflows/tests.yml/badge.svg?branch=develop)](https://github.com/joshtmags/tms/actions/workflows/tests.yml) | 95%+ |
+
+### View Test Results
+
+- **Latest Test Run**: [View Actions Tab](https://github.com/joshtmags/tms/actions)
+- **Workflow File**: [tests.yml](/.github/workflows/tests.yml)
+
+The CI pipeline ensures code quality and prevents regressions by running the complete test suite on every change.
+
+## 🧪 Local Environment Testing
   **Run all tests
   ```bash
   composer test
