@@ -13,8 +13,7 @@ class TranslationControllerTest extends TestCase
     {
         parent::setUp();
 
-        Language::factory()->english()->create();
-        Language::factory()->french()->create();
+        $this->create_test_languages();
     }
 
     public function test_authenticated_user_can_create_translation()
