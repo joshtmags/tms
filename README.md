@@ -29,6 +29,7 @@ A high-performance, scalable Translation Management Service built with Laravel. 
 ## 🏗️ System Architecture
 
 ### Database Schema Design
+```
 languages
 ├── id
 ├── code (en, fr, es, de)
@@ -52,6 +53,7 @@ translation_tags
 translation_group_tag (pivot)
 ├── translation_group_id (FK)
 └── translation_tag_id (FK)
+```
 
 ### Key Design Decisions
 
